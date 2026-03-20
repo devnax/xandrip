@@ -1,0 +1,35 @@
+{
+   "name": "dndrip",
+   "version": "1.0.0",
+   "main": "./index.js",
+   "module": "./index.mjs",
+   "types": "./index.d.ts",
+   "description": "",
+   "keywords": [],
+   "sideEffects": false,
+   "scripts": {
+      "start": "makepack start",
+      "build": "makepack build",
+      "release": "makepack release"
+   },
+   "exports": {
+      ".": {
+         "import": "./index.mjs",
+         "require": "./index.js",
+         "types": "./index.d.ts"
+      }
+   },
+   "devDependencies": {
+      "@types/express": "latest",
+      "@types/react": "^19.0.2",
+      "@types/react-dom": "^19.0.2",
+      "@xanui/core": "^1.2.61",
+      "@xanui/icons": "^1.1.12",
+      "@xanui/ui": "^1.2.5",
+      "express": "latest",
+      "makepack": "latest",
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "typescript": "^4.4.2"
+   }
+}
