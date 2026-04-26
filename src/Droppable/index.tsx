@@ -1,7 +1,7 @@
 import React, { HTMLProps, ReactElement, createContext, useContext } from "react";
-import { DraggableProps } from "../Draggable";
 import { Iframe } from "@xanui/core";
 import { useWrapper } from "../Wrapper/context";
+import { DraggableProps } from "../Draggable/types";
 
 export type DroppableContextValue = {
    id: string | null;

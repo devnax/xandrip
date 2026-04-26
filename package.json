@@ -1,5 +1,5 @@
 {
-   "name": "dndrip",
+   "name": "xandrip",
    "version": "1.0.0",
    "main": "./index.js",
    "module": "./index.mjs",
@@ -7,6 +7,10 @@
    "description": "",
    "keywords": [],
    "sideEffects": false,
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/devnax/xandrip.git"
+   },
    "scripts": {
       "start": "makepack start",
       "build": "makepack build",
