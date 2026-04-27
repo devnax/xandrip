@@ -8,9 +8,7 @@ import Wrapper from '../src/Wrapper'
 
 const Example = () => {
    return (
-      <Wrapper
-
-      >
+      <Wrapper>
          <ViewBox
             height="100%"
             horizental

@@ -19,8 +19,8 @@ const Icon = ({ name, icon }: IconProps) => {
          alignItems={"center"}
          justifyContent={"center"}
          border={"1px solid"}
-         borderColor='divider'
-         bgcolor={"background.primary"}
+         borderColor='surface.divider'
+         bgcolor={"surface.main"}
          width={130}
          height={100}
          userSelect={"none"}
@@ -35,7 +35,7 @@ const Widget = () => {
    return (
       <Stack
          width={350}
-         bgcolor="background.secondary"
+         bgcolor="surface.light"
          height="100vh"
          p={2}
          gap={2}
@@ -44,7 +44,7 @@ const Widget = () => {
          <Stack
             flexRow
          >
-            <Droppable id="widget" behaviour='copy' style={{
+            <Droppable id="widget" style={{
                display: "flex",
                flexDirection: "row",
                gap: 8

@@ -6,7 +6,7 @@ import Example from './example';
 
 const App = () => {
   return (
-    <AppRoot theme='dark' height="100vh">
+    <AppRoot theme={{ mode: "dark" }} height="100vh">
       <Example />
     </AppRoot>
   )

@@ -19,7 +19,8 @@ export type WrapperProps = {
    sortingAnimation?: boolean;
 }
 
-export type WrapperContextValue = Omit<WrapperProps, "children"> & { id: string }
+
+export type WrapperContextValue = Omit<WrapperProps, "children"> & { id: string, containers: () => Map<string, ContainerInfo> }
 
 export type DraggableInfo = {
    id: string;
