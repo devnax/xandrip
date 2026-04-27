@@ -4,6 +4,7 @@ export const getWrapper = (wrapperId: string) => {
    if (!wrapper) throw new Error("Invalid Wrapper id");
    return wrapper
 }
+
 export const getDroppables = (wrapperId: string) => {
    const droppables: any = document.querySelectorAll(`[data-wrapper="${wrapperId}"]`)
    return [...droppables] as HTMLElement[]

@@ -1,5 +1,7 @@
 import { createContext, useContext } from "react"
-import { WrapperContextValue } from "./types"
+import { StartDragProps } from "../include/startDrag"
+
+export type WrapperContextValue = { id: string } & StartDragProps
 
 export const WrapperContext = createContext<WrapperContextValue | null>(null)
 export const useWrapper = () => {

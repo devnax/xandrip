@@ -34,7 +34,7 @@ const Icon = ({ name, icon }: IconProps) => {
 const Widget = () => {
    return (
       <Stack
-         width={350}
+         width={450}
          bgcolor="surface.light"
          height="100vh"
          p={2}
@@ -47,12 +47,25 @@ const Widget = () => {
             <Droppable id="widget" style={{
                display: "flex",
                flexDirection: "row",
+               flexWrap: "wrap",
                gap: 8
             }}>
-               <Draggable id="a">
+               <Draggable id="wa">
                   <Icon name="Text" icon={<TextFields />} />
                </Draggable>
-               <Draggable id="b">
+               <Draggable id="wb">
+                  <Icon name="View" icon={<TextFields />} />
+               </Draggable>
+               <Draggable id="wc">
+                  <Icon name="View" icon={<TextFields />} />
+               </Draggable>
+               <Draggable id="wd">
+                  <Icon name="View" icon={<TextFields />} />
+               </Draggable>
+               <Draggable id="we">
+                  <Icon name="View" icon={<TextFields />} />
+               </Draggable>
+               <Draggable id="wg">
                   <Icon name="View" icon={<TextFields />} />
                </Draggable>
             </Droppable>
