@@ -1,6 +1,7 @@
+"use client"
 import React, { HTMLProps, ReactNode } from 'react'
-import { useWrapper } from '../Wrapper/context'
-import startDrag from '../include/startDrag'
+import { useXandripRoot } from '../XandripRoot/context'
+import startDrag from './startDrag'
 import { useDroppable } from '../Droppable/context'
 
 export type DraggableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children"> & {
@@ -10,7 +11,7 @@ export type DraggableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "ch
 }
 
 const Draggable = ({ children, id, data, ...rest }: DraggableProps) => {
-   const wrapper = useWrapper()
+   const wrapper = useXandripRoot()
    const droppable = useDroppable()
 
    return (
@@ -20,6 +21,7 @@ const Draggable = ({ children, id, data, ...rest }: DraggableProps) => {
          data-droppable={droppable.id}
          onPointerDown={(e) => {
             startDrag(e as any, id, data, wrapper)
+            rest.onPointerDown!(e)
          }}
       >
          {children}

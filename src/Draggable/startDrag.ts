@@ -1,3 +1,4 @@
+"use client"
 import { HTMLProps, ReactElement, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -10,7 +11,7 @@ import {
 } from "./elements";
 import animate from "./animate";
 
-export type StateProps = {
+export type XandripState = {
    data: any,
    source: {
       id: string,
@@ -24,18 +25,19 @@ export type StateProps = {
 
 
 export type StartDragProps = {
-   onReady?: (state: StateProps, event: PointerEvent) => void;
-   onStart?: (state: StateProps, event: PointerEvent) => void;
-   onMove?: (state: StateProps, event: PointerEvent) => void;
-   onDrop?: (state: StateProps, event: PointerEvent) => void;
-   canCopy?: (state: StateProps, event: PointerEvent) => boolean;
-   canDrag?: (state: StateProps, event: PointerEvent) => boolean;
+   onReady?: (state: XandripState, event: PointerEvent) => void;
+   onStart?: (state: XandripState, event: PointerEvent) => void;
+   onMove?: (state: XandripState, event: PointerEvent) => void;
+   onDrop?: (state: XandripState, event: PointerEvent) => void;
+   canCopy?: (state: XandripState, event: PointerEvent) => boolean;
+   canDrag?: (state: XandripState, event: PointerEvent) => boolean;
+   canDrop?: (state: XandripState, event: PointerEvent) => boolean;
 
-   renderPlaceholder?: (state: StateProps, event: PointerEvent) => ReactElement<HTMLProps<HTMLElement>> | void;
-   renderActiveItem?: (state: StateProps, event: PointerEvent) => ReactElement<HTMLProps<HTMLElement>> | void;
-   getActiveItemProps?: (state: StateProps, event: PointerEvent) => HTMLProps<HTMLDivElement>
-   getPlaceholderProps?: (state: StateProps, event: PointerEvent) => HTMLProps<HTMLDivElement>
-   getActiveDroppableProps?: (state: StateProps, event: PointerEvent) => HTMLProps<HTMLDivElement>
+   renderPlaceholder?: (state: XandripState, event: PointerEvent) => ReactElement<HTMLProps<HTMLElement>> | void;
+   renderActiveItem?: (state: XandripState, event: PointerEvent) => ReactElement<HTMLProps<HTMLElement>> | void;
+   getActiveItemProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement>
+   getPlaceholderProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement>
+   getActiveDroppableProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement>
 
    disableAnimation?: boolean;
 };
@@ -54,7 +56,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    const droppables = getDroppables(wrapperId);
    const draggables = getDraggables(droppableId)
    const currentIndex = draggables.findIndex(d => d === draggable)
-   const state: StateProps = {
+   const state: XandripState = {
       data,
       source: {
          id: droppableId,
@@ -184,16 +186,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
 
       const container = droppables.filter((con) => {
-         const isTargetCopy = props?.canCopy ? props?.canCopy({
-            data,
-            source: {
-               id: con.id,
-               index: 0
-            },
-            target: null
-         }, e) : false
-
-         if (isTargetCopy || draggable?.contains(con) || placeholder?.contains(con)) return false
+         if (draggable?.contains(con) || placeholder?.contains(con)) return false
 
          const r = con.getBoundingClientRect();
          return (
@@ -203,6 +196,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
             e.clientY <= r.bottom
          );
       }).sort((a, b) => a.getBoundingClientRect().height - b.getBoundingClientRect().height)[0];
+
 
       if (props?.getActiveDroppableProps) {
          if (state.target) {
@@ -222,6 +216,30 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          }
          return
       };
+
+      if (props?.canCopy) {
+         const isTargetCopy = props?.canCopy({
+            data,
+            source: {
+               id: container.id,
+               index: 0
+            },
+            target: null
+         }, e)
+
+         if (isTargetCopy) return
+      }
+
+      if (props?.canDrop) {
+         const is = props?.canDrop({
+            ...state,
+            target: {
+               id: container.id,
+               index: 0
+            }
+         }, e)
+         if (!is) return
+      }
 
       if (props?.getActiveDroppableProps) {
          applyElementProps(container, props?.getActiveDroppableProps(state, e))
@@ -276,6 +294,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          id: targetConId,
          index: finalIndex
       }
+
       renderDragElements(e);
       if (props?.onMove) {
          props.onMove(state, e)

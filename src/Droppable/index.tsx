@@ -1,6 +1,7 @@
+"use client"
 import React, { HTMLProps, ReactElement } from 'react'
 import { DraggableProps } from '../Draggable'
-import { useWrapper } from '../Wrapper/context'
+import { useXandripRoot } from '../XandripRoot/context'
 import { DroppableContext } from './context'
 
 export type DroppableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children"> & {
@@ -9,7 +10,7 @@ export type DroppableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "ch
 }
 
 const Droppable = ({ children, id, ...rest }: DroppableProps) => {
-   const wrapper = useWrapper()
+   const wrapper = useXandripRoot()
 
    return (
       <DroppableContext.Provider

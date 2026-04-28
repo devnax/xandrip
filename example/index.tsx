@@ -4,18 +4,24 @@ import Widget from './Widget'
 import Droppable from '../src/Droppable'
 import Draggable from '../src/Draggable'
 import Box from '@xanui/ui/Box'
-import Wrapper from '../src/Wrapper'
+import XandripRoot from '../src/XandripRoot'
 import Text from '@xanui/ui/Text';
 
 const Example = () => {
    return (
-      <Wrapper
+      <XandripRoot
          onDrop={({ source, data }) => {
             console.log(data);
          }}
          canCopy={(state) => {
             return state.source.id === "widget"
          }}
+         // canDrop={(state) => {
+         //    if (state.target?.id === "new") {
+         //       return true
+         //    }
+         //    return false
+         // }}
          // canDrag={(state, e) => {
          //    const target = e.target as HTMLElement
          //    if (target.tagName === "BUTTON") {
@@ -123,7 +129,7 @@ const Example = () => {
                </Draggable>
             </Droppable>
          </ViewBox>
-      </Wrapper>
+      </XandripRoot>
    )
 }
 

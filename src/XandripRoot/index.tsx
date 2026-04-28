@@ -1,16 +1,15 @@
+"use client"
 import React, { HTMLProps, useId, ReactNode } from "react";
-import { WrapperContext } from "./context";
-import { StartDragProps } from "../include/startDrag";
+import { XandripRootContext } from "./context";
+import { StartDragProps } from "../Draggable/startDrag";
 
 
-export type WrapperProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children" | "onDrop"> & {
+export type XandripRootProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children" | "onDrop"> & {
    children: ReactNode
 } & StartDragProps
 
 
-
-
-const Wrapper = ({ children, style, onReady, onStart, onMove, onDrop, canCopy, canDrag, renderPlaceholder, renderActiveItem, getActiveItemProps, getPlaceholderProps, getActiveDroppableProps, disableAnimation, ...props }: WrapperProps) => {
+const XandripRoot = ({ children, style, onReady, onStart, onMove, onDrop, canCopy, canDrop, canDrag, renderPlaceholder, renderActiveItem, getActiveItemProps, getPlaceholderProps, getActiveDroppableProps, disableAnimation, ...props }: XandripRootProps) => {
    const id = useId()
    const s: StartDragProps = {}
    if (onReady) s.onReady = onReady
@@ -18,6 +17,7 @@ const Wrapper = ({ children, style, onReady, onStart, onMove, onDrop, canCopy, c
    if (onMove) s.onMove = onMove
    if (onDrop) s.onDrop = onDrop
    if (canCopy) s.canCopy = canCopy
+   if (canDrop) s.canDrop = canDrop
    if (canDrag) s.canDrag = canDrag
    if (renderPlaceholder) s.renderPlaceholder = renderPlaceholder
    if (renderActiveItem) s.renderActiveItem = renderActiveItem
@@ -27,7 +27,7 @@ const Wrapper = ({ children, style, onReady, onStart, onMove, onDrop, canCopy, c
    if (disableAnimation) s.disableAnimation = disableAnimation
 
    return (
-      <WrapperContext.Provider
+      <XandripRootContext.Provider
          value={{
             id,
             ...s
@@ -39,8 +39,8 @@ const Wrapper = ({ children, style, onReady, onStart, onMove, onDrop, canCopy, c
          >
             {children}
          </div>
-      </WrapperContext.Provider>
+      </XandripRootContext.Provider>
    )
 }
 
-export default Wrapper
+export default XandripRoot
