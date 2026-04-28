@@ -1,8 +1,8 @@
 {
    "name": "xandrip",
-   "version": "1.0.1",
-   "main": "./index.js",
-   "module": "./index.mjs",
+   "version": "1.0.2",
+   "main": "./index.cjs",
+   "module": "./index.js",
    "types": "./index.d.ts",
    "description": "",
    "keywords": [],
@@ -24,7 +24,7 @@
       "@xanui/icons": "^1.1.12",
       "@xanui/ui": "^1.2.8",
       "express": "latest",
-      "makepack": "latest",
+      "makepack": "^1.7.30",
       "react": "^19.0.0",
       "react-dom": "^19.0.0",
       "typescript": "^4.4.2"
