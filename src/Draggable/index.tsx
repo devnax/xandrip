@@ -21,7 +21,6 @@ const Draggable = ({ children, id, data, ...rest }: DraggableProps) => {
          data-droppable={droppable.id}
          onPointerDown={(e) => {
             startDrag(e as any, id, data, wrapper)
-            rest.onPointerDown!(e)
          }}
       >
          {children}
