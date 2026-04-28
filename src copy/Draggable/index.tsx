@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react"
+import React, { HTMLProps, useLayoutEffect } from "react"
 import { useDroppable } from "../Droppable";
 import { XandState } from "../state";
 import useStableState from "../utils/useState";
@@ -7,6 +7,7 @@ import { useWrapper } from "../Wrapper/context";
 import animate from "./animate";
 import { DraggableProps, StateProps } from "./types";
 import { isObject } from "../utils";
+
 
 const Draggable = ({ id, children, data, ...props }: DraggableProps, ref: any) => {
    const droppable = useDroppable()

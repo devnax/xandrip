@@ -1,3 +1,4 @@
+import { HTMLProps } from "react";
 
 export const getWrapper = (wrapperId: string) => {
    const wrapper = document.getElementById(wrapperId)
@@ -26,3 +27,36 @@ export const getDraggable = (draggableId: string) => {
    if (!draggalbe) throw new Error("Invalid draggable id");
    return draggalbe
 }
+
+
+
+
+export const applyElementProps = (element: HTMLElement, props: HTMLProps<HTMLDivElement>) => {
+   Object.entries(props).forEach(([key, value]) => {
+
+      if (value == null || ["id", "data-droppable", "data-draggable", "data-wrapper"].includes(key)) return;
+
+      // style object
+      if (key === "style" && typeof value === "object") {
+         Object.assign(element.style, value);
+         return;
+      }
+
+      // className
+      if (key === "className") {
+         element.classList.remove(value)
+         element.classList.add(value)
+         return;
+      }
+
+      // events
+      if (key.startsWith("on") && typeof value === "function") {
+         const eventName = key.slice(2).toLowerCase();
+         element.addEventListener(eventName, value as EventListener);
+         return;
+      }
+
+      // attributes
+      element.setAttribute(key, String(value));
+   });
+};

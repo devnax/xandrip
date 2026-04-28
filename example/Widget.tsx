@@ -25,6 +25,7 @@ const Icon = ({ name, icon }: IconProps) => {
          height={100}
          userSelect={"none"}
       >
+         <button>Move</button>
          <Box>{icon}</Box>
          <Text>{name}</Text>
       </Stack>
@@ -34,7 +35,7 @@ const Icon = ({ name, icon }: IconProps) => {
 const Widget = () => {
    return (
       <Stack
-         width={450}
+         width={350}
          bgcolor="surface.light"
          height="100vh"
          p={2}
@@ -50,7 +51,7 @@ const Widget = () => {
                flexWrap: "wrap",
                gap: 8
             }}>
-               <Draggable id="wa">
+               <Draggable id="wa" data={{ name: "nax" }}>
                   <Icon name="Text" icon={<TextFields />} />
                </Draggable>
                <Draggable id="wb">

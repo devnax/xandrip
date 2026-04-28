@@ -10,11 +10,82 @@ import Text from '@xanui/ui/Text';
 const Example = () => {
    return (
       <Wrapper
+         onDrop={({ source, data }) => {
+            console.log(data);
+         }}
          canCopy={(state) => {
             return state.source.id === "widget"
          }}
+         // canDrag={(state, e) => {
+         //    const target = e.target as HTMLElement
+         //    if (target.tagName === "BUTTON") {
+         //       return true
+         //    }
+         //    return false
+         // }}
          style={{
             width: "100%",
+         }}
+
+         renderActiveItem={(state) => {
+            if (!state.target) {
+               return <Box>No</Box>
+            }
+
+            return <Box
+               width={60}
+               height={60}
+               bgcolor="black"
+               shadow={2}
+            >Hello</Box>
+         }}
+
+         renderPlaceholder={() => {
+            return <Box>Hello</Box>
+         }}
+
+         getActiveDroppableProps={(state) => {
+            if (!state.target) {
+               return {
+                  style: {
+                     background: "transparent",
+                     border: "none"
+                  }
+               }
+            }
+
+            return {
+               style: {
+                  background: "red",
+                  border: "2px dashed grey"
+               }
+            }
+         }}
+
+         getPlaceholderProps={() => {
+            return {
+               style: {
+                  background: "red",
+                  border: "2px dashed grey"
+               }
+            }
+         }}
+
+         getActiveItemProps={(state) => {
+            if (!state.target?.id) {
+               return {
+                  style: {
+                     background: "pink",
+                     border: "2px dashed grey"
+                  }
+               }
+            }
+            return {
+               style: {
+                  background: "red",
+                  border: "2px dashed grey"
+               }
+            }
          }}
       >
          <ViewBox
