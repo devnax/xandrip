@@ -6,7 +6,7 @@ import { DroppableContext } from './context'
 
 export type DroppableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children"> & {
    id: string
-   children: ReactElement<DraggableProps>[] | ReactElement<DraggableProps>
+   children?: ReactElement<DraggableProps>[] | ReactElement<DraggableProps>
 }
 
 const Droppable = ({ children, id, ...rest }: DroppableProps) => {
