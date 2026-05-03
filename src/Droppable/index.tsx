@@ -1,26 +1,32 @@
-"use client"
-import React, { HTMLProps, ReactElement } from 'react'
-import { DraggableProps } from '../Draggable'
-import { useXandripRoot } from '../XandripRoot/context'
-import { DroppableContext } from './context'
+"use client";
 
-export type DroppableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children"> & {
-   id: string
-   children?: ReactElement<DraggableProps>[] | ReactElement<DraggableProps>
-}
+import React, {
+   HTMLAttributes,
+   ReactNode,
+} from "react";
+
+import { useXandripRoot } from "../XandripRoot/context";
+import { DroppableContext } from "./context";
+
+export type DroppableProps = Omit<HTMLAttributes<HTMLDivElement>, "id"> & {
+   id: string;
+   children?: ReactNode;
+};
 
 const Droppable = ({ children, id, ...rest }: DroppableProps) => {
-   const wrapper = useXandripRoot()
+   const wrapper = useXandripRoot();
 
    return (
-      <DroppableContext.Provider
-         value={{ id }}
-      >
-         <div {...rest} data-wrapper={wrapper.id} id={id}>
+      <DroppableContext.Provider value={{ id }}>
+         <div
+            {...rest}
+            id={id}
+            data-wrapper={wrapper.id}
+         >
             {children}
          </div>
       </DroppableContext.Provider>
-   )
-}
+   );
+};
 
-export default Droppable
+export default Droppable;

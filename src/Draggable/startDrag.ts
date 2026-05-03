@@ -9,10 +9,12 @@ import {
    getDroppables,
    getWrapper,
 } from "./elements";
-import animate from "./animate";
 
 export type XandripState = {
    data: any,
+   draggable: {
+      id: string;
+   },
    source: {
       id: string,
       index: number;
@@ -46,7 +48,6 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    event.stopPropagation()
 
    const draggable = getDraggable(draggableId);
-
    const droppableId = draggable.dataset.droppable!;
    const droppable = getDroppable(droppableId);
 
@@ -58,6 +59,9 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    const currentIndex = draggables.findIndex(d => d === draggable)
    const state: XandripState = {
       data,
+      draggable: {
+         id: draggableId
+      },
       source: {
          id: droppableId,
          index: currentIndex,
@@ -97,7 +101,9 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
    let prevKey = "";
    const renderDragElements = (e: PointerEvent) => {
-      const key = JSON.stringify(state);
+      const key =
+         `${state.source.id}:${state.source.index}|` +
+         `${state.target?.id ?? ""}:${state.target?.index ?? -1}`;
       if (key === prevKey) return;
       prevKey = key;
 
@@ -134,13 +140,16 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    placeholder.style.display = `none`;
    placeholder.style.opacity = `.3`;
 
-   clone.style.visibility = "hidden";
    clone.style.position = "fixed";
-   clone.style.top = "0px";
-   clone.style.left = "0px";
+   clone.style.top = `${rect.top}px`;
+   clone.style.left = `${rect.left}px`;
+   clone.style.width = `${rect.width}px`;
+   clone.style.height = `${rect.height}px`;
+   clone.style.margin = "0";
    clone.style.pointerEvents = "none";
    clone.style.willChange = "transform";
    clone.style.zIndex = "999999";
+   clone.style.visibility = "hidden";
 
    draggable.after(placeholder);
    wrapper.appendChild(clone);
@@ -161,17 +170,18 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          offsetX = cloneRect.width * grabX;
          offsetY = cloneRect.height * grabY;
 
-         requestAnimationFrame(() => {
-            clone.style.visibility = "visible";
-         })
+         // requestAnimationFrame(() => {
+         clone.style.visibility = "visible";
+         // })
 
          if (props?.onStart) {
             props.onStart(state, e)
          }
       }
 
-      const x = e.clientX - offsetX;
-      const y = e.clientY - offsetY;
+      const x = e.clientX - offsetX - rect.left;
+      const y = e.clientY - offsetY - rect.top;
+
       clone.style.transform = `translate(${x}px, ${y}px)`;
 
       // hide original
@@ -210,6 +220,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
       if (!container) {
          state.target = null
+         placeholder.style.display = "none"
          renderDragElements(e)
          if (props?.onMove) {
             props.onMove(state, e)
@@ -217,9 +228,13 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          return
       };
 
+
       if (props?.canCopy) {
          const isTargetCopy = props?.canCopy({
             data,
+            draggable: {
+               id: draggableId
+            },
             source: {
                id: container.id,
                index: 0
@@ -227,7 +242,10 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
             target: null
          }, e)
 
-         if (isTargetCopy) return
+         if (isTargetCopy) {
+            placeholder.style.display = "none"
+            return
+         }
       }
 
       if (props?.canDrop) {
@@ -238,7 +256,11 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
                index: 0
             }
          }, e)
-         if (!is) return
+         if (!is) {
+            state.target = null;
+            placeholder.style.display = "none";
+            return;
+         }
       }
 
       if (props?.getActiveDroppableProps) {
@@ -280,13 +302,40 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
       const refNode = items[insertIndex];
       if (placeholder.nextElementSibling !== refNode || placeholder.parentElement !== container) {
-         const play = !props?.disableAnimation ? animate(items) : null
+         const firstRects = new Map<HTMLElement, DOMRect>();
+
+         if (!props?.disableAnimation) {
+            items.forEach((el) => {
+               firstRects.set(el, el.getBoundingClientRect());
+            });
+         }
+
+
          if (refNode) {
             container.insertBefore(placeholder, refNode);
          } else {
             container.appendChild(placeholder);
          }
-         play && play()
+         if (!props?.disableAnimation) {
+            items.forEach((el) => {
+               const first = firstRects.get(el);
+               if (!first) return;
+               const last = el.getBoundingClientRect();
+               const dx = first.left - last.left;
+               const dy = first.top - last.top;
+
+               if (!dx && !dy) return;
+
+               el.style.transition = "none";
+               el.style.transform = `translate(${dx}px, ${dy}px)`;
+               requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                     el.style.transition = "transform 250ms cubic-bezier(.22,.61,.36,1)";
+                     el.style.transform = "";
+                  });
+               });
+            });
+         }
       }
 
       const finalIndex = targetDraggables.filter((el) => el !== draggable).findIndex(d => d === placeholder)
@@ -302,6 +351,37 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    };
 
    const Up = (e: PointerEvent) => {
+
+      document.removeEventListener("pointermove", Move);
+      document.removeEventListener("pointerup", Up);
+      document.removeEventListener("pointercancel", Up);
+
+      let targetX = 0;
+      let targetY = 0;
+
+      if (state.target) {
+         const finalRect = placeholder.getBoundingClientRect();
+         targetX = finalRect.left - rect.left;
+         targetY = finalRect.top - rect.top;
+      } else {
+         targetX = 0;
+         targetY = 0;
+      }
+
+      clone.style.transition = "transform 180ms cubic-bezier(.2,.8,.2,1)";
+      clone.style.transform = `translate(${targetX}px, ${targetY}px)`;
+
+      const finish = () => {
+         clone.removeEventListener("transitionend", finish);
+         setTimeout(() => {
+            cleanup(e);
+         }, 50)
+      };
+
+      clone.addEventListener("transitionend", finish);
+   };
+
+   const cleanup = (e: PointerEvent) => {
       if (props?.onDrop && state.target) {
          props.onDrop(state, e)
       }
@@ -316,8 +396,6 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          }
       }
 
-      document.removeEventListener("pointermove", Move);
-      document.removeEventListener("pointerup", Up);
       draggable.style.removeProperty("display");
       cloneRoot.unmount();
       placeholderRoot.unmount();

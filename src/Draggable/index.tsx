@@ -6,7 +6,7 @@ import { useDroppable } from '../Droppable/context'
 
 export type DraggableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children"> & {
    id: string
-   children?: ReactNode;
+   children: ReactNode;
    data?: any
 }
 
