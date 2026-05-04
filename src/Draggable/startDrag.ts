@@ -37,11 +37,11 @@ export type StartDragProps = {
 
    renderPlaceholder?: (state: XandripState, event: PointerEvent) => ReactElement<HTMLProps<HTMLElement>> | void;
    renderActiveItem?: (state: XandripState, event: PointerEvent) => ReactElement<HTMLProps<HTMLElement>> | void;
-   getActiveItemProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement>
-   getPlaceholderProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement>
-   getActiveDroppableProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement>
+   getActiveItemProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement> | void
+   getPlaceholderProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement> | void
+   getActiveDroppableProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement> | void
 
-   disableAnimation?: boolean;
+   disableAnimation?: (state: XandripState, event: PointerEvent) => boolean
 };
 
 const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?: StartDragProps) => {
@@ -108,29 +108,35 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
       prevKey = key;
 
       if (props?.renderPlaceholder) {
-         placeholderRoot.render(
-            props.renderPlaceholder(state, e) as ReactNode
-         );
+         const pdom = props.renderPlaceholder(state, e)
+         if (pdom) {
+            placeholderRoot.render(pdom);
+         }
       }
 
       if (props?.renderActiveItem) {
-         cloneRoot.render(
-            props.renderActiveItem(state, e) as ReactNode
-         );
+         const activedom = props.renderActiveItem(state, e) as ReactNode
+         cloneRoot.render(activedom);
       }
 
       if (props?.getPlaceholderProps) {
-         applyElementProps(
-            placeholder,
-            props.getPlaceholderProps(state, e)
-         );
+         const pprops = props.getPlaceholderProps(state, e)
+         if (pprops) {
+            applyElementProps(
+               placeholder,
+               pprops
+            );
+         }
       }
 
       if (props?.getActiveItemProps) {
-         applyElementProps(
-            clone,
-            props.getActiveItemProps(state, e)
-         );
+         const aprops = props.getActiveItemProps(state, e)
+         if (aprops) {
+            applyElementProps(
+               clone,
+               aprops
+            );
+         }
       }
    };
 
@@ -211,10 +217,13 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
       if (props?.getActiveDroppableProps) {
          if (state.target) {
             const td = getDroppable(state.target.id)
-            applyElementProps(td, props?.getActiveDroppableProps({
+            const dprops = props?.getActiveDroppableProps({
                ...state,
                target: null
-            }, e))
+            }, e)
+            if (dprops) {
+               applyElementProps(td, dprops)
+            }
          }
       }
 
@@ -264,7 +273,10 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
       }
 
       if (props?.getActiveDroppableProps) {
-         applyElementProps(container, props?.getActiveDroppableProps(state, e))
+         const dprops = props?.getActiveDroppableProps(state, e)
+         if (dprops) {
+            applyElementProps(container, dprops)
+         }
       }
 
       const targetConId = container.id;
@@ -304,7 +316,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
       if (placeholder.nextElementSibling !== refNode || placeholder.parentElement !== container) {
          const firstRects = new Map<HTMLElement, DOMRect>();
 
-         if (!props?.disableAnimation) {
+         if (props?.disableAnimation && !props.disableAnimation(state, e)) {
             items.forEach((el) => {
                firstRects.set(el, el.getBoundingClientRect());
             });
@@ -316,7 +328,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          } else {
             container.appendChild(placeholder);
          }
-         if (!props?.disableAnimation) {
+         if (props?.disableAnimation && !props.disableAnimation(state, e)) {
             items.forEach((el) => {
                const first = firstRects.get(el);
                if (!first) return;
@@ -389,10 +401,13 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
       if (props?.getActiveDroppableProps) {
          if (state.target) {
             const td = getDroppable(state.target.id)
-            applyElementProps(td, props?.getActiveDroppableProps({
+            const dprops = props?.getActiveDroppableProps({
                ...state,
                target: null
-            }, e))
+            }, e)
+            if (dprops) {
+               applyElementProps(td, dprops)
+            }
          }
       }
 

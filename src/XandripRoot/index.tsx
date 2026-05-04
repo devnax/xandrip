@@ -11,7 +11,7 @@ export type XandripRootProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "
 
 const XandripRoot = ({ children, style, onReady, onStart, onMove, onDrop, canCopy, canDrop, canDrag, renderPlaceholder, renderActiveItem, getActiveItemProps, getPlaceholderProps, getActiveDroppableProps, disableAnimation, ...props }: XandripRootProps) => {
    const id = useId()
-   const s: StartDragProps = {}
+   const s: any = { id }
    if (onReady) s.onReady = onReady
    if (onStart) s.onStart = onStart
    if (onMove) s.onMove = onMove
@@ -28,10 +28,7 @@ const XandripRoot = ({ children, style, onReady, onStart, onMove, onDrop, canCop
 
    return (
       <XandripRootContext.Provider
-         value={{
-            id,
-            ...s
-         }}
+         value={s}
       >
          <div
             id={id}
