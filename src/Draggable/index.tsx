@@ -4,7 +4,7 @@ import { useXandripRoot } from '../XandripRoot/context'
 import startDrag from './startDrag'
 import { useDroppable } from '../Droppable/context'
 
-export type DraggableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children"> & {
+export type DraggableProps = Omit<HTMLProps<HTMLDivElement>, "id" | "data" | "children" | "onPointerDown"> & {
    id: string
    children: ReactNode;
    data?: any
