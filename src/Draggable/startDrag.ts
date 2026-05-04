@@ -116,7 +116,9 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
       if (props?.renderActiveItem) {
          const activedom = props.renderActiveItem(state, e) as ReactNode
-         cloneRoot.render(activedom);
+         if (activedom) {
+            cloneRoot.render(activedom);
+         }
       }
 
       if (props?.getPlaceholderProps) {
@@ -160,7 +162,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    draggable.after(placeholder);
    wrapper.appendChild(clone);
 
-   if (props?.renderActiveItem) {
+   if (props?.renderActiveItem && props?.renderActiveItem(state, event)) {
       const cloneRect = clone.getBoundingClientRect();
       offsetX = cloneRect.width * grabX;
       offsetY = cloneRect.height * grabY;
@@ -175,10 +177,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          const cloneRect = clone.getBoundingClientRect();
          offsetX = cloneRect.width * grabX;
          offsetY = cloneRect.height * grabY;
-
-         // requestAnimationFrame(() => {
          clone.style.visibility = "visible";
-         // })
 
          if (props?.onStart) {
             props.onStart(state, e)
