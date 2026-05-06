@@ -1,9 +1,10 @@
 import { createContext, useContext } from "react"
-import { StartDragProps } from "../Draggable/startDrag"
+import { XandripContextValue } from "../XandripProvider"
 
 export type DroppableContextValue = {
    id: string
-} & StartDragProps
+   registry: Map<string, XandripContextValue>
+}
 
 export const DroppableContext = createContext<DroppableContextValue | null>(null)
 export const useDroppable = () => {
