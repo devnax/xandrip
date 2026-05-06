@@ -25,6 +25,31 @@ export type XandripState = {
 }
 
 
+const DROPPABLE_SELECTOR = "[data-xan-droppable]";
+
+function resolveDroppableFromPoint(
+   x: number,
+   y: number,
+   draggable: HTMLElement,
+   placeholder: HTMLElement
+): HTMLElement | null {
+   const el = document.elementFromPoint(x, y) as HTMLElement | null;
+   if (!el) return null;
+
+   let container = el.closest("[data-xan-droppable]") as HTMLElement | null;
+
+   // Ignore invalid/self containers
+   if (
+      !container ||
+      draggable.contains(container) ||
+      placeholder.contains(container)
+   ) {
+      return null;
+   }
+
+   return container;
+}
+
 export type StartDragProps = {
    onReady?: (state: XandripState, event: PointerEvent) => void;
    onStart?: (state: XandripState, event: PointerEvent) => void;
@@ -194,16 +219,27 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          }
       }
 
-      const container = droppables.filter((con) => {
-         if (draggable?.contains(con) || placeholder?.contains(con)) return false
-         const r = con.getBoundingClientRect();
-         return (
-            e.clientX >= r.left &&
-            e.clientX <= r.right &&
-            e.clientY >= r.top &&
-            e.clientY <= r.bottom
-         );
-      }).sort((a, b) => a.getBoundingClientRect().height - b.getBoundingClientRect().height)[0];
+      // const container = droppables.filter((con) => {
+      //    if (draggable?.contains(con) || placeholder?.contains(con)) return false
+      //    const r = con.getBoundingClientRect();
+      //    return (
+      //       e.clientX >= r.left &&
+      //       e.clientX <= r.right &&
+      //       e.clientY >= r.top &&
+      //       e.clientY <= r.bottom
+      //    );
+      // }).sort((a, b) => a.getBoundingClientRect().height - b.getBoundingClientRect().height)[0];
+
+
+      let container = resolveDroppableFromPoint(
+         e.clientX,
+         e.clientY,
+         draggable,
+         placeholder
+      );
+
+      console.log(container);
+
 
       if (props?.getActiveDroppableProps) {
          if (state.target) {
