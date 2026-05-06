@@ -96,13 +96,13 @@ const Draggable = ({ children, id, data, ...rest }: DraggableProps) => {
                   }
                },
 
-               disableAnimation: (state, event) => {
-                  const { disableAnimation } = droppable.registry.get(state.target?.id as string) || {}
-                  if (disableAnimation) {
-                     return disableAnimation(state, event)
-                  }
-                  return false
-               },
+               // disableAnimation: (state, event) => {
+               //    const { disableAnimation } = droppable.registry.get(state.target?.id as string) || {}
+               //    if (disableAnimation) {
+               //       return disableAnimation(state, event)
+               //    }
+               //    return false
+               // },
             })
          }}
       >

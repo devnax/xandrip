@@ -40,7 +40,7 @@ export type StartDragProps = {
    getPlaceholderProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement> | void
    getActiveDroppableProps?: (state: XandripState, event: PointerEvent) => HTMLProps<HTMLDivElement> | void
 
-   disableAnimation?: (state: XandripState, event: PointerEvent) => boolean
+   // disableAnimation?: (state: XandripState, event: PointerEvent) => boolean
 };
 
 const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?: StartDragProps) => {
@@ -89,12 +89,10 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    const placeholderRoot = createRoot(placeholder)
 
    clone.removeAttribute("data-xan-droppable")
-   clone.removeAttribute("data-droppable")
    clone.removeAttribute("style")
 
    placeholder.removeAttribute("data-xan-droppable-id")
    placeholder.removeAttribute("data-xan-draggable")
-   placeholder.removeAttribute("data-droppable")
    placeholder.removeAttribute("style")
 
    let prevKey = "";
@@ -157,7 +155,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    clone.style.visibility = "hidden";
 
    draggable.after(placeholder);
-   droppable.appendChild(clone);
+   droppable.after(clone);
 
    if (props?.renderActiveItem && props?.renderActiveItem(state, event)) {
       const cloneRect = clone.getBoundingClientRect();
@@ -196,7 +194,6 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          }
       }
 
-
       const container = droppables.filter((con) => {
          if (draggable?.contains(con) || placeholder?.contains(con)) return false
          const r = con.getBoundingClientRect();
@@ -207,7 +204,6 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
             e.clientY <= r.bottom
          );
       }).sort((a, b) => a.getBoundingClientRect().height - b.getBoundingClientRect().height)[0];
-
 
       if (props?.getActiveDroppableProps) {
          if (state.target) {
@@ -231,7 +227,6 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          }
          return
       };
-
 
       if (props?.canCopy) {
          const isTargetCopy = props?.canCopy({
@@ -310,45 +305,46 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
       const refNode = items[insertIndex];
       if (placeholder.nextElementSibling !== refNode || placeholder.parentElement !== container) {
-         const firstRects = new Map<HTMLElement, DOMRect>();
-
-         if (props?.disableAnimation && !props.disableAnimation(state, e)) {
-            items.forEach((el) => {
-               firstRects.set(el, el.getBoundingClientRect());
-            });
-         }
+         // const firstRects = new Map<HTMLElement, DOMRect>();
+         // if (props?.disableAnimation && !props.disableAnimation(state, e)) {
+         //    items.forEach((el) => {
+         //       firstRects.set(el, el.getBoundingClientRect());
+         //    });
+         // }
 
          if (refNode) {
             container.insertBefore(placeholder, refNode);
          } else {
             container.appendChild(placeholder);
          }
-         if (props?.disableAnimation && !props.disableAnimation(state, e)) {
-            items.forEach((el) => {
-               const first = firstRects.get(el);
-               if (!first) return;
-               const last = el.getBoundingClientRect();
-               const dx = first.left - last.left;
-               const dy = first.top - last.top;
 
-               if (!dx && !dy) return;
+         // if (props?.disableAnimation && !props.disableAnimation(state, e)) {
+         //    items.forEach((el) => {
+         //       const first = firstRects.get(el);
+         //       if (!first) return;
+         //       const last = el.getBoundingClientRect();
+         //       const dx = first.left - last.left;
+         //       const dy = first.top - last.top;
 
-               el.style.transition = "none";
-               el.style.transform = `translate(${dx}px, ${dy}px)`;
-               requestAnimationFrame(() => {
-                  requestAnimationFrame(() => {
-                     el.style.transition = "transform 250ms cubic-bezier(.22,.61,.36,1)";
-                     el.style.transform = "";
-                  });
-               });
-            });
-         }
+         //       if (!dx && !dy) return;
+
+         //       el.style.transition = "none";
+         //       el.style.transform = `translate(${dx}px, ${dy}px)`;
+
+         //       requestAnimationFrame(() => {
+         //          requestAnimationFrame(() => {
+         //             el.style.transition = "transform 250ms cubic-bezier(.22,.61,.36,1)";
+         //             el.style.transform = "";
+         //          });
+         //       });
+         //    });
+         // }
       }
 
-      const finalIndex = targetDraggables.filter((el) => el !== draggable).findIndex(d => d === placeholder)
+      // const finalIndex = targetDraggables.filter((el) => el !== draggable).findIndex(d => d === placeholder)
       state.target = {
          id: targetConId,
-         index: finalIndex
+         index: insertIndex
       }
 
       renderDragElements(e);

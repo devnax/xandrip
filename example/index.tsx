@@ -97,35 +97,41 @@ const Example = () => {
             horizental
             startContent={<Widget />}
          >
-            <Droppable id="main" style={{ width: "100%" }}>
-               <Draggable id="a">
-                  <Box bgcolor={"red"}>
-                     <Text>New Droppable</Text>
-                     <Droppable
-                        id="new"
-                     >
-                        <Draggable id="new1">
-                           <Box>New 1</Box>
-                        </Draggable>
-                        <Draggable id="new2">
-                           <Box>New 2</Box>
-                        </Draggable>
-                     </Droppable>
-                  </Box>
-               </Draggable>
-               <Draggable id="b">
-                  <Box height={60} bgcolor={"green"} opacity={.5}>well</Box>
-               </Draggable>
-               <Draggable id="yellow">
-                  <Box height={60} bgcolor={"yellow"} opacity={.5}>Yellow</Box>
-               </Draggable>
-               <Draggable id="blue">
-                  <Box height={60} bgcolor={"blue"} opacity={.5}>blue</Box>
-               </Draggable>
-               <Draggable id="orange">
-                  <Box height={60} bgcolor={"orange"} opacity={.5}>orange</Box>
-               </Draggable>
-            </Droppable>
+            <XandripProvider
+               onDrop={() => {
+
+               }}
+            >
+               <Droppable id="main" style={{ width: "100%" }}>
+                  <Draggable id="a">
+                     <Box bgcolor={"red"}>
+                        <Text>New Droppable</Text>
+                        <Droppable
+                           id="new"
+                        >
+                           <Draggable id="new1">
+                              <Box>New 1</Box>
+                           </Draggable>
+                           <Draggable id="new2">
+                              <Box>New 2</Box>
+                           </Draggable>
+                        </Droppable>
+                     </Box>
+                  </Draggable>
+                  <Draggable id="b">
+                     <Box height={60} bgcolor={"green"} opacity={.5}>well</Box>
+                  </Draggable>
+                  <Draggable id="yellow">
+                     <Box height={60} bgcolor={"yellow"} opacity={.5}>Yellow</Box>
+                  </Draggable>
+                  <Draggable id="blue">
+                     <Box height={60} bgcolor={"blue"} opacity={.5}>blue</Box>
+                  </Draggable>
+                  <Draggable id="orange">
+                     <Box height={60} bgcolor={"orange"} opacity={.5}>orange</Box>
+                  </Draggable>
+               </Droppable>
+            </XandripProvider>
          </ViewBox>
       </XandripProvider>
    )
