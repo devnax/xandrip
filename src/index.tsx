@@ -1,16 +1,17 @@
-import XandripRoot, { XandripRootProps } from './XandripRoot'
+import { XandripProvider, useXandrip, XandripProviderProps } from './XandripProvider'
 import Droppable, { DroppableProps } from './Droppable'
 import Draggable, { DraggableProps } from './Draggable'
 import startDrag, { XandripState } from './Draggable/startDrag'
 
 export type {
-   XandripRootProps,
+   XandripProviderProps,
    DroppableProps,
    DraggableProps,
    XandripState
 }
 export {
-   XandripRoot,
+   XandripProvider,
+   useXandrip,
    Droppable,
    Draggable,
    startDrag

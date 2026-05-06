@@ -7,7 +7,6 @@ import {
    getDraggables,
    getDroppable,
    getDroppables,
-   getWrapper,
 } from "./elements";
 
 export type XandripState = {
@@ -48,15 +47,12 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    event.stopPropagation()
 
    const draggable = getDraggable(draggableId);
-   const droppableId = draggable.dataset.droppable!;
+   const droppableId = draggable.dataset.xanDroppableId as string
    const droppable = getDroppable(droppableId);
-
-   const wrapperId = droppable.dataset.wrapper!;
-   const wrapper = getWrapper(wrapperId);
-
-   const droppables = getDroppables(wrapperId);
+   const droppables = getDroppables();
    const draggables = getDraggables(droppableId)
    const currentIndex = draggables.findIndex(d => d === draggable)
+
    const state: XandripState = {
       data,
       draggable: {
@@ -71,6 +67,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          index: currentIndex,
       },
    }
+
    const isSourceCopy = props?.canCopy ? props?.canCopy(state, event) : false
    if (isSourceCopy) {
       state.target = null
@@ -91,11 +88,12 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    const cloneRoot = createRoot(clone)
    const placeholderRoot = createRoot(placeholder)
 
-   clone.removeAttribute("id")
+   clone.removeAttribute("data-xan-droppable")
    clone.removeAttribute("data-droppable")
    clone.removeAttribute("style")
 
-   placeholder.removeAttribute("id")
+   placeholder.removeAttribute("data-xan-droppable-id")
+   placeholder.removeAttribute("data-xan-draggable")
    placeholder.removeAttribute("data-droppable")
    placeholder.removeAttribute("style")
 
@@ -144,7 +142,6 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
    renderDragElements(event)
 
-   wrapper.style.userSelect = "none";
    placeholder.style.display = `none`;
    placeholder.style.opacity = `.3`;
 
@@ -160,7 +157,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    clone.style.visibility = "hidden";
 
    draggable.after(placeholder);
-   wrapper.appendChild(clone);
+   droppable.appendChild(clone);
 
    if (props?.renderActiveItem && props?.renderActiveItem(state, event)) {
       const cloneRect = clone.getBoundingClientRect();
@@ -202,7 +199,6 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
       const container = droppables.filter((con) => {
          if (draggable?.contains(con) || placeholder?.contains(con)) return false
-
          const r = con.getBoundingClientRect();
          return (
             e.clientX >= r.left &&
@@ -244,7 +240,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
                id: draggableId
             },
             source: {
-               id: container.id,
+               id: container.dataset.xanDroppable as string,
                index: 0
             },
             target: null
@@ -260,10 +256,11 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          const is = props?.canDrop({
             ...state,
             target: {
-               id: container.id,
+               id: container.dataset.xanDroppable as string,
                index: 0
             }
          }, e)
+
          if (!is) {
             state.target = null;
             placeholder.style.display = "none";
@@ -278,7 +275,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          }
       }
 
-      const targetConId = container.id;
+      const targetConId = container.dataset.xanDroppable as string;
       const targetDraggables = getDraggables(targetConId)
       const items = targetDraggables.filter((el) => el !== draggable && el !== placeholder);
 
@@ -320,7 +317,6 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
                firstRects.set(el, el.getBoundingClientRect());
             });
          }
-
 
          if (refNode) {
             container.insertBefore(placeholder, refNode);
@@ -416,7 +412,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
 
       clone.remove();
       placeholder.remove();
-      wrapper.style.removeProperty("user-select");
+      // root.style.removeProperty("user-select");
       (event.target as HTMLElement).releasePointerCapture?.(event.pointerId);
    };
 

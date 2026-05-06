@@ -4,34 +4,32 @@ import Widget from './Widget'
 import Droppable from '../src/Droppable'
 import Draggable from '../src/Draggable'
 import Box from '@xanui/ui/Box'
-import XandripRoot from '../src/XandripRoot'
 import Text from '@xanui/ui/Text';
+import { XandripProvider } from '../src/XandripProvider';
 
 const Example = () => {
    return (
-      <XandripRoot
-         onDrop={({ source, data }) => {
-            console.log(source);
+      <XandripProvider
+         onDrop={({ source, target, data }) => {
+            console.log(source, target);
          }}
          canCopy={(state) => {
             return state.source.id === "widget"
          }}
-         // canDrop={(state) => {
-         //    if (state.target?.id === "new") {
-         //       return true
-         //    }
-         //    return false
-         // }}
-         // canDrag={(state, e) => {
-         //    const target = e.target as HTMLElement
-         //    if (target.tagName === "BUTTON") {
-         //       return true
-         //    }
-         //    return false
-         // }}
-         style={{
-            width: "100%",
-         }}
+      // canDrop={(state) => {
+      //    if (state.target?.id === "new") {
+      //       return true
+      //    }
+      //    return false
+      // }}
+      // canDrag={(state, e) => {
+      //    const target = e.target as HTMLElement
+      //    if (target.tagName === "BUTTON") {
+      //       return true
+      //    }
+      //    return false
+      // }}
+
 
       // renderActiveItem={(state) => {
       //    if (!state.target) {
@@ -116,20 +114,20 @@ const Example = () => {
                   </Box>
                </Draggable>
                <Draggable id="b">
-                  <Box height={60} bgcolor={"green"}>well</Box>
+                  <Box height={60} bgcolor={"green"} opacity={.5}>well</Box>
                </Draggable>
                <Draggable id="yellow">
-                  <Box height={60} bgcolor={"yellow"}>Yellow</Box>
+                  <Box height={60} bgcolor={"yellow"} opacity={.5}>Yellow</Box>
                </Draggable>
                <Draggable id="blue">
-                  <Box height={60} bgcolor={"blue"}>blue</Box>
+                  <Box height={60} bgcolor={"blue"} opacity={.5}>blue</Box>
                </Draggable>
                <Draggable id="orange">
-                  <Box height={60} bgcolor={"orange"}>orange</Box>
+                  <Box height={60} bgcolor={"orange"} opacity={.5}>orange</Box>
                </Draggable>
             </Droppable>
          </ViewBox>
-      </XandripRoot>
+      </XandripProvider>
    )
 }
 

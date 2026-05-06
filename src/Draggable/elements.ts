@@ -1,20 +1,14 @@
 import { HTMLProps } from "react";
 
-export const getWrapper = (wrapperId: string) => {
-   const wrapper = document.getElementById(wrapperId)
-   if (!wrapper) throw new Error("Invalid Wrapper id");
-   return wrapper
-}
-
-export const getDroppables = (wrapperId: string) => {
-   const droppables: any = document.querySelectorAll(`[data-wrapper="${wrapperId}"]`)
+export const getDroppables = () => {
+   const droppables: any = document.querySelectorAll(`[data-xan-droppable]`)
    return [...droppables] as HTMLElement[]
 }
 
 export const getDroppable = (droppableId: string) => {
-   const droppable = document.getElementById(droppableId)
+   const droppable = document.querySelector(`[data-xan-droppable="${droppableId}"]`)
    if (!droppable) throw new Error(`Invalid droppable ID: ${droppableId}`);
-   return droppable
+   return droppable as HTMLElement
 }
 
 export const getDraggables = (droppableId: string) => {
@@ -23,18 +17,16 @@ export const getDraggables = (droppableId: string) => {
 }
 
 export const getDraggable = (draggableId: string) => {
-   const draggalbe = document.getElementById(draggableId)
+   const draggalbe = document.querySelector(`[data-xan-draggable="${draggableId}"]`)
    if (!draggalbe) throw new Error("Invalid draggable id");
-   return draggalbe
+   return draggalbe as HTMLElement
 }
-
-
 
 
 export const applyElementProps = (element: HTMLElement, props: HTMLProps<HTMLDivElement>) => {
    Object.entries(props).forEach(([key, value]) => {
 
-      if (value == null || ["id", "data-droppable", "data-draggable", "data-wrapper"].includes(key)) return;
+      if (value == null || ["data-xan-droppable", "data-xan-draggable"].includes(key)) return;
 
       // style object
       if (key === "style" && typeof value === "object") {
