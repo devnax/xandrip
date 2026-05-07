@@ -106,6 +106,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    const grabX = (event.clientX - rect.left) / rect.width;
    const grabY = (event.clientY - rect.top) / rect.height;
 
+   let drag_started = false
    let offsetX = event.clientX - rect.left;
    let offsetY = event.clientY - rect.top;
 
@@ -114,13 +115,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    const cloneRoot = createRoot(clone)
    const placeholderRoot = createRoot(placeholder)
 
-   clone.removeAttribute("data-xan-droppable")
-   clone.removeAttribute("style")
 
-   placeholder.removeAttribute("data-xan-droppable-id")
-   placeholder.removeAttribute("data-xan-draggable")
-   placeholder.removeAttribute("style")
-   startAutoScroll();
    let prevKey = "";
    const renderDragElements = (e: PointerEvent) => {
       const key =
@@ -165,6 +160,13 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    };
 
    renderDragElements(event)
+   startAutoScroll();
+   clone.removeAttribute("data-xan-droppable")
+   clone.removeAttribute("style")
+
+   placeholder.removeAttribute("data-xan-droppable-id")
+   placeholder.removeAttribute("data-xan-draggable")
+   placeholder.removeAttribute("style")
 
    placeholder.style.display = `none`;
    placeholder.style.opacity = `.3`;
@@ -193,6 +195,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
       props.onReady(state, event)
    }
 
+
    const Move = (e: PointerEvent) => {
       if (clone.style.visibility === 'hidden') {
          const cloneRect = clone.getBoundingClientRect();
@@ -204,6 +207,8 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
             props.onStart(state, e)
          }
       }
+
+      drag_started = true
 
       const x = e.clientX - offsetX - rect.left;
       const y = e.clientY - offsetY - rect.top;
@@ -426,11 +431,11 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    };
 
    const cleanup = (e: PointerEvent) => {
-      if (props?.onDrop && state.target) {
+      if (props?.onDrop && state.target && drag_started) {
          props.onDrop(state, e)
       }
 
-      if (props?.getActiveDroppableProps) {
+      if (props?.getActiveDroppableProps && drag_started) {
          if (state.target) {
             const td = getDroppable(state.target.id)
             const dprops = props?.getActiveDroppableProps({
