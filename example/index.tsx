@@ -100,28 +100,46 @@ const Example = () => {
             startContent={<Widget />}
          >
             <XandripProvider
-               onDrop={() => {
+               onDrop={(d) => {
+                  console.log(d);
 
                }}
             >
-               <Droppable id="root" style={{ width: "100%" }}>
+               <Droppable id="root" style={{ width: "100%", overflow: "auto", height: "100%", background: "red" }}>
                   {
-                     Array(50).fill(1).map((v, i) => {
-                        return (<Droppable
-                           key={"droppable" + i}
-                           id={"droppable" + i}
-                           style={{ width: "100%", border: "1px solid #d0d0d0" }}
-                        >
-                           {
-                              Array(5).fill(1).map((v, i) => {
-                                 return (
-                                    <Draggable key={"draggable" + i} id={"draggable" + i} style={{ width: "100%" }}>
-                                       <Box>New {i}</Box>
-                                    </Draggable>
-                                 )
-                              })
-                           }
-                        </Droppable>)
+                     Array(1000).fill(1).map((v, i) => {
+                        return (
+                           <Draggable
+                              key={"droppable" + i}
+                              id={"draggable-container-" + i}
+                           >
+                              <Droppable
+                                 id={"droppable" + i}
+                                 style={{
+                                    width: "100%",
+                                    border: "1px solid #d0d0d0",
+                                    marginBottom: 50,
+                                    minHeight: 80,
+                                 }}
+                              >
+                                 {
+                                    Array(20).fill(1).map((v, di) => {
+                                       return (
+                                          <Draggable
+                                             key={`draggable-item-${i}-${di}`}
+                                             id={`draggable-item-${i}-${di}`}
+                                             style={{ width: "100%" }}
+                                          >
+                                             <Box>
+                                                New {di} {i}
+                                             </Box>
+                                          </Draggable>
+                                       )
+                                    })
+                                 }
+                              </Droppable>
+                           </Draggable>
+                        )
                      })
                   }
                </Droppable>

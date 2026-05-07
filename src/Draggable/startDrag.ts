@@ -8,6 +8,7 @@ import {
    getDroppable,
    getDroppables,
 } from "./elements";
+import { getCachedScrollParents, autoScroll, startAutoScroll, stopAutoScroll } from "./autoScroll";
 
 export type XandripState = {
    data: any,
@@ -24,8 +25,6 @@ export type XandripState = {
    }
 }
 
-
-const DROPPABLE_SELECTOR = "[data-xan-droppable]";
 
 function resolveDroppableFromPoint(
    x: number,
@@ -49,6 +48,7 @@ function resolveDroppableFromPoint(
 
    return container;
 }
+
 
 export type StartDragProps = {
    onReady?: (state: XandripState, event: PointerEvent) => void;
@@ -77,6 +77,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    const droppables = getDroppables();
    const draggables = getDraggables(droppableId)
    const currentIndex = draggables.findIndex(d => d === draggable)
+   const scrollables = getCachedScrollParents(draggable);
 
    const state: XandripState = {
       data,
@@ -119,7 +120,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    placeholder.removeAttribute("data-xan-droppable-id")
    placeholder.removeAttribute("data-xan-draggable")
    placeholder.removeAttribute("style")
-
+   startAutoScroll();
    let prevKey = "";
    const renderDragElements = (e: PointerEvent) => {
       const key =
@@ -238,8 +239,12 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
          placeholder
       );
 
-      console.log(container);
 
+      autoScroll(
+         e.clientX,
+         e.clientY,
+         container
+      );
 
       if (props?.getActiveDroppableProps) {
          if (state.target) {
@@ -390,7 +395,7 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    };
 
    const Up = (e: PointerEvent) => {
-
+      stopAutoScroll();
       document.removeEventListener("pointermove", Move);
       document.removeEventListener("pointerup", Up);
       document.removeEventListener("pointercancel", Up);
