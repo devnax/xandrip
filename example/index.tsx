@@ -107,7 +107,7 @@ const Example = () => {
             >
                <Droppable id="root" style={{ width: "100%", overflow: "auto", height: "100%", background: "red" }}>
                   {
-                     Array(1000).fill(1).map((v, i) => {
+                     Array(2000).fill(1).map((v, i) => {
                         return (
                            <Draggable
                               key={"droppable" + i}
