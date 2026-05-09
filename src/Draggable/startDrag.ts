@@ -400,6 +400,8 @@ const startDrag = (event: PointerEvent, draggableId: string, data?: any, props?:
    };
 
    const Up = (e: PointerEvent) => {
+     const isStarted =  drag_started 
+       drag_started = false
       stopAutoScroll();
       document.removeEventListener("pointermove", Move);
       document.removeEventListener("pointerup", Up);
