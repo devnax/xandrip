@@ -228,6 +228,10 @@ const startDrag = (
     const cloneRect = clone.getBoundingClientRect();
     offsetX = cloneRect.width * grabX;
     offsetY = cloneRect.height * grabY;
+
+    clone.style.width = `auto`;
+    clone.style.height = `auto`;
+    clone.style.display = `inline-block`;
   }
 
   if (props?.onReady) {

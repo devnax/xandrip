@@ -1,32 +1,32 @@
 {
-   "name": "xandrip",
-   "version": "1.0.10",
-   "main": "./index.cjs",
-   "module": "./index.js",
-   "types": "./index.d.ts",
-   "description": "",
-   "keywords": [],
-   "sideEffects": false,
-   "repository": {
-      "type": "git",
-      "url": "git+https://github.com/devnax/xandrip.git"
-   },
-   "scripts": {
-      "start": "makepack start",
-      "build": "makepack build",
-      "release": "makepack release"
-   },
-   "devDependencies": {
-      "@types/express": "latest",
-      "@types/react": "^19.0.2",
-      "@types/react-dom": "^19.0.2",
-      "@xanui/core": "^1.3.12",
-      "@xanui/icons": "^1.1.12",
-      "@xanui/ui": "^1.2.8",
-      "express": "latest",
-      "makepack": "^1.7.30",
-      "react": "^19.0.0",
-      "react-dom": "^19.0.0",
-      "typescript": "^4.4.2"
-   }
+  "name": "xandrip",
+  "version": "1.0.11",
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "description": "",
+  "keywords": [],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devnax/xandrip.git"
+  },
+  "scripts": {
+    "start": "makepack start",
+    "build": "makepack build",
+    "release": "makepack release"
+  },
+  "devDependencies": {
+    "@types/express": "latest",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@xanui/core": "^1.3.12",
+    "@xanui/icons": "^1.1.12",
+    "@xanui/ui": "^1.2.8",
+    "express": "latest",
+    "makepack": "^1.7.30",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^4.4.2"
+  }
 }

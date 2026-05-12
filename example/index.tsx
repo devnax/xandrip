@@ -1,23 +1,21 @@
-import React from 'react';
-import ViewBox from '@xanui/ui/ViewBox'
-import Widget from './Widget'
-import Droppable from '../src/Droppable'
-import Draggable from '../src/Draggable'
-import Box from '@xanui/ui/Box'
-import Text from '@xanui/ui/Text';
-import { XandripProvider } from '../src/XandripProvider';
+import React from "react";
+import ViewBox from "@xanui/ui/ViewBox";
+import Widget from "./Widget";
+import Droppable from "../src/Droppable";
+import Draggable from "../src/Draggable";
+import Box from "@xanui/ui/Box";
+import Text from "@xanui/ui/Text";
+import { XandripProvider } from "../src/XandripProvider";
 
 const Example = () => {
-
-
-   return (
-      <XandripProvider
-         onDrop={({ source, target, data }) => {
-            console.log(source, target);
-         }}
-         canCopy={(state) => {
-            return state.source.id === "widget"
-         }}
+  return (
+    <XandripProvider
+      onDrop={({ source, target, data }) => {
+        console.log(source, target);
+      }}
+      canCopy={(state) => {
+        return state.source.id === "widget";
+      }}
       // canDrop={(state) => {
       //    if (state.target?.id === "new") {
       //       return true
@@ -32,19 +30,13 @@ const Example = () => {
       //    return false
       // }}
 
-
-      // renderActiveItem={(state) => {
-      //    if (!state.target) {
-      //       return <Box>No</Box>
-      //    }
-
-      //    return <Box
-      //       width={60}
-      //       height={60}
-      //       bgcolor="black"
-      //       shadow={2}
-      //    >Hello</Box>
-      // }}
+      renderActiveItem={(state) => {
+        return (
+          <Box width={60} height={60} bgcolor="black" shadow={2}>
+            Hello
+          </Box>
+        );
+      }}
 
       // renderPlaceholder={() => {
       //    return <Box>Hello</Box>
@@ -93,60 +85,62 @@ const Example = () => {
       //       }
       //    }
       // }}
-      >
-         <ViewBox
-            height="100%"
-            horizental
-            startContent={<Widget />}
-         >
-            <XandripProvider
-               onDrop={(d) => {
-                  console.log(d);
+    >
+      <ViewBox height="100%" horizental startContent={<Widget />}>
+        <XandripProvider
+          onDrop={(d) => {
+            console.log(d);
+          }}
+        >
+          <Droppable
+            id="root"
+            style={{
+              width: "100%",
+              overflow: "auto",
+              height: "100%",
+            }}
+          >
+            {Array(1)
+              .fill(1)
+              .map((v, i) => {
+                return (
+                  <Draggable
+                    key={"droppable" + i}
+                    id={"draggable-container-" + i}
+                  >
+                    <Droppable
+                      id={"droppable" + i}
+                      style={{
+                        width: "100%",
+                        border: "1px solid #d0d0d0",
+                        marginBottom: 50,
+                        minHeight: 80,
+                      }}
+                    >
+                      {Array(2)
+                        .fill(1)
+                        .map((v, di) => {
+                          return (
+                            <Draggable
+                              key={`draggable-item-${i}-${di}`}
+                              id={`draggable-item-${i}-${di}`}
+                              style={{ width: "100%" }}
+                            >
+                              <Box>
+                                New {di} {i}
+                              </Box>
+                            </Draggable>
+                          );
+                        })}
+                    </Droppable>
+                  </Draggable>
+                );
+              })}
+          </Droppable>
+        </XandripProvider>
+      </ViewBox>
+    </XandripProvider>
+  );
+};
 
-               }}
-            >
-               <Droppable id="root" style={{ width: "100%", overflow: "auto", height: "100%", background: "red" }}>
-                  {
-                     Array(2000).fill(1).map((v, i) => {
-                        return (
-                           <Draggable
-                              key={"droppable" + i}
-                              id={"draggable-container-" + i}
-                           >
-                              <Droppable
-                                 id={"droppable" + i}
-                                 style={{
-                                    width: "100%",
-                                    border: "1px solid #d0d0d0",
-                                    marginBottom: 50,
-                                    minHeight: 80,
-                                 }}
-                              >
-                                 {
-                                    Array(20).fill(1).map((v, di) => {
-                                       return (
-                                          <Draggable
-                                             key={`draggable-item-${i}-${di}`}
-                                             id={`draggable-item-${i}-${di}`}
-                                             style={{ width: "100%" }}
-                                          >
-                                             <Box>
-                                                New {di} {i}
-                                             </Box>
-                                          </Draggable>
-                                       )
-                                    })
-                                 }
-                              </Droppable>
-                           </Draggable>
-                        )
-                     })
-                  }
-               </Droppable>
-            </XandripProvider>
-         </ViewBox >
-      </XandripProvider >
-   )
-}
-
-export default Example
+export default Example;
