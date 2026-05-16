@@ -1,5 +1,5 @@
 "use client";
-import React, { HTMLProps, ReactNode } from "react";
+import React, { forwardRef, HTMLProps, ReactNode } from "react";
 import startDrag from "./startDrag";
 import { useDroppable } from "../Droppable/context";
 
@@ -12,12 +12,16 @@ export type DraggableProps = Omit<
   data?: any;
 };
 
-const Draggable = ({ children, id, data, ...rest }: DraggableProps) => {
+const Draggable = (
+  { children, id, data, ...rest }: DraggableProps,
+  ref: React.ForwardedRef<HTMLDivElement>,
+) => {
   const droppable = useDroppable();
 
   return (
     <div
       {...rest}
+      ref={ref}
       data-xan-droppable-id={droppable.id}
       data-xan-draggable={id}
       onPointerDown={(e) => {
@@ -122,4 +126,4 @@ const Draggable = ({ children, id, data, ...rest }: DraggableProps) => {
   );
 };
 
-export default Draggable;
+export default forwardRef(Draggable);
