@@ -8,12 +8,7 @@ import {
   getDroppable,
   getDroppables,
 } from "./elements";
-import {
-  getCachedScrollParents,
-  autoScroll,
-  startAutoScroll,
-  stopAutoScroll,
-} from "./autoScroll";
+import { autoScroll, startAutoScroll, stopAutoScroll } from "./autoScroll";
 
 export type XandripState = {
   data: any;

@@ -7,13 +7,14 @@ import { useXandrip } from "../XandripProvider";
 
 export type DroppableProps = Omit<HTMLAttributes<HTMLDivElement>, "id"> & {
   id: string;
+  data?: Record<string, any>;
   children?: ReactNode;
 };
 
 const registry = new Map();
 
 const Droppable = (
-  { children, id, ...rest }: DroppableProps,
+  { children, id, data, ...rest }: DroppableProps,
   ref: React.ForwardedRef<HTMLDivElement>,
 ) => {
   const root = useXandrip();
@@ -28,7 +29,7 @@ const Droppable = (
   }, [id]);
 
   return (
-    <DroppableContext.Provider value={{ id, registry }}>
+    <DroppableContext.Provider value={{ id, data, registry }}>
       <div {...rest} ref={ref} data-xan-droppable={id}>
         {children}
       </div>

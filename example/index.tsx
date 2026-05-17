@@ -100,7 +100,7 @@ const Example = () => {
               height: "100%",
             }}
           >
-            {Array(1)
+            {Array(100)
               .fill(1)
               .map((v, i) => {
                 return (
@@ -117,7 +117,7 @@ const Example = () => {
                         minHeight: 80,
                       }}
                     >
-                      {Array(2)
+                      {Array(20)
                         .fill(1)
                         .map((v, di) => {
                           return (
