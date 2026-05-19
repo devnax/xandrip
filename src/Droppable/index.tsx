@@ -7,7 +7,7 @@ export type DroppableProps = Omit<
   "id" | "data"
 > & {
   id: string;
-  data?: Record<string, any>;
+  data?: any;
   children?: ReactNode;
 };
 
