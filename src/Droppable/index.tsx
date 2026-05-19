@@ -1,35 +1,36 @@
 "use client";
-
 import React, { forwardRef, HTMLAttributes, ReactNode, useEffect } from "react";
-
 import { DroppableContext } from "./context";
-import { useXandrip } from "../XandripProvider";
 
-export type DroppableProps = Omit<HTMLAttributes<HTMLDivElement>, "id"> & {
+export type DroppableProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "id" | "data"
+> & {
   id: string;
   data?: Record<string, any>;
   children?: ReactNode;
 };
 
-const registry = new Map();
+export const droppableRegistry = new Map();
 
 const Droppable = (
   { children, id, data, ...rest }: DroppableProps,
   ref: React.ForwardedRef<HTMLDivElement>,
 ) => {
-  const root = useXandrip();
   useEffect(() => {
-    if (registry.has(id)) {
+    if (droppableRegistry.has(id)) {
       throw new Error(`Duplicat id: ${id}`);
     }
-    registry.set(id, root);
+    droppableRegistry.set(id, { id, data });
     return () => {
-      registry.delete(id);
+      droppableRegistry.delete(id);
     };
   }, [id]);
 
   return (
-    <DroppableContext.Provider value={{ id, data, registry }}>
+    <DroppableContext.Provider
+      value={{ id, data, registry: droppableRegistry }}
+    >
       <div {...rest} ref={ref} data-xan-droppable={id}>
         {children}
       </div>

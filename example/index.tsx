@@ -10,7 +10,7 @@ import { XandripProvider } from "../src/XandripProvider";
 const Example = () => {
   return (
     <XandripProvider
-      onDrop={({ source, target, data }) => {
+      onDrop={({ source, target }) => {
         console.log(source, target);
       }}
       canCopy={(state) => {
@@ -115,6 +115,9 @@ const Example = () => {
                         border: "1px solid #d0d0d0",
                         marginBottom: 50,
                         minHeight: 80,
+                      }}
+                      data={{
+                        droppable: i,
                       }}
                     >
                       {Array(20)

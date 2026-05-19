@@ -6,22 +6,27 @@ import {
   getDraggable,
   getDraggables,
   getDroppable,
-  getDroppables,
 } from "./elements";
 import { autoScroll, startAutoScroll, stopAutoScroll } from "./autoScroll";
+import { droppableRegistry } from "../Droppable";
 
 export type XandripState = {
-  data: any;
   draggable: {
     id: string;
+    data: any;
+    element: HTMLElement;
   };
   source: {
     id: string;
     index: number;
+    data: any;
+    element: HTMLElement;
   };
   target: null | {
     id: string;
     index: number;
+    data: any;
+    element: HTMLElement;
   };
 };
 
@@ -73,10 +78,10 @@ export type StartDragProps = {
     state: XandripState,
     event: PointerEvent,
   ) => HTMLProps<HTMLDivElement> | void;
-  getActiveDroppableProps?: (
-    state: XandripState,
-    event: PointerEvent,
-  ) => HTMLProps<HTMLDivElement> | void;
+  // getActiveDroppableProps?: (
+  //   state: XandripState,
+  //   event: PointerEvent,
+  // ) => HTMLProps<HTMLDivElement> | void;
 
   // disableAnimation?: (state: XandripState, event: PointerEvent) => boolean
 };
@@ -92,23 +97,26 @@ const startDrag = (
   const draggable = getDraggable(draggableId);
   const droppableId = draggable.dataset.xanDroppableId as string;
   const droppable = getDroppable(droppableId);
-  //   const droppables = getDroppables();
   const draggables = getDraggables(droppableId);
   const currentIndex = draggables.findIndex((d) => d === draggable);
-  //   const scrollables = getCachedScrollParents(draggable);
 
   const state: XandripState = {
-    data,
     draggable: {
       id: draggableId,
+      data,
+      element: draggable,
     },
     source: {
       id: droppableId,
       index: currentIndex,
+      data: droppableRegistry.get(droppableId),
+      element: droppable,
     },
     target: {
       id: droppableId,
       index: currentIndex,
+      data: droppableRegistry.get(droppableId),
+      element: droppable,
     },
   };
 
@@ -149,43 +157,43 @@ const startDrag = (
   const placeholderRoot = createRoot(placeholder);
 
   let prevKey = "";
-  const renderDragElements = (e: PointerEvent) => {
+  const renderDragElements = (_state: any, e: PointerEvent) => {
     const key =
-      `${state.source.id}:${state.source.index}|` +
-      `${state.target?.id ?? ""}:${state.target?.index ?? -1}`;
+      `${_state.source.id}:${_state.source.index}|` +
+      `${_state.target?.id ?? ""}:${_state.target?.index ?? -1}`;
     if (key === prevKey) return;
     prevKey = key;
 
     if (props?.renderPlaceholder) {
-      const pdom = props.renderPlaceholder(state, e);
+      const pdom = props.renderPlaceholder(_state, e);
       if (pdom) {
         placeholderRoot.render(pdom);
       }
     }
 
     if (props?.renderActiveItem) {
-      const activedom = props.renderActiveItem(state, e) as ReactNode;
+      const activedom = props.renderActiveItem(_state, e) as ReactNode;
       if (activedom) {
         cloneRoot.render(activedom);
       }
     }
 
     if (props?.getPlaceholderProps) {
-      const pprops = props.getPlaceholderProps(state, e);
+      const pprops = props.getPlaceholderProps(_state, e);
       if (pprops) {
         applyElementProps(placeholder, pprops);
       }
     }
 
     if (props?.getActiveItemProps) {
-      const aprops = props.getActiveItemProps(state, e);
+      const aprops = props.getActiveItemProps(_state, e);
       if (aprops) {
         applyElementProps(clone, aprops);
       }
     }
   };
 
-  renderDragElements(event);
+  renderDragElements(state, event);
   startAutoScroll();
 
   placeholder.removeAttribute("data-xan-droppable-id");
@@ -263,17 +271,6 @@ const startDrag = (
       }
     }
 
-    // const container = droppables.filter((con) => {
-    //    if (draggable?.contains(con) || placeholder?.contains(con)) return false
-    //    const r = con.getBoundingClientRect();
-    //    return (
-    //       e.clientX >= r.left &&
-    //       e.clientX <= r.right &&
-    //       e.clientY >= r.top &&
-    //       e.clientY <= r.bottom
-    //    );
-    // }).sort((a, b) => a.getBoundingClientRect().height - b.getBoundingClientRect().height)[0];
-
     let container = resolveDroppableFromPoint(
       e.clientX,
       e.clientY,
@@ -283,26 +280,10 @@ const startDrag = (
 
     autoScroll(e.clientX, e.clientY, container);
 
-    if (props?.getActiveDroppableProps) {
-      if (state.target) {
-        const td = getDroppable(state.target.id);
-        const dprops = props?.getActiveDroppableProps(
-          {
-            ...state,
-            target: null,
-          },
-          e,
-        );
-        if (dprops) {
-          applyElementProps(td, dprops);
-        }
-      }
-    }
-
     if (!container) {
       state.target = null;
       placeholder.style.display = "none";
-      renderDragElements(e);
+      renderDragElements(state, e);
       if (props?.onMove) {
         props.onMove(state, e);
       }
@@ -312,15 +293,14 @@ const startDrag = (
     if (props?.canCopy) {
       const isTargetCopy = props?.canCopy(
         {
-          data,
-          draggable: {
-            id: draggableId,
-          },
+          ...state,
+          target: null,
           source: {
             id: container.dataset.xanDroppable as string,
             index: 0,
+            data: droppableRegistry.get(container.dataset.xanDroppable),
+            element: container,
           },
-          target: null,
         },
         e,
       );
@@ -338,6 +318,8 @@ const startDrag = (
           target: {
             id: container.dataset.xanDroppable as string,
             index: 0,
+            data: droppableRegistry.get(container.dataset.xanDroppable),
+            element: container,
           },
         },
         e,
@@ -347,13 +329,6 @@ const startDrag = (
         state.target = null;
         placeholder.style.display = "none";
         return;
-      }
-    }
-
-    if (props?.getActiveDroppableProps) {
-      const dprops = props?.getActiveDroppableProps(state, e);
-      if (dprops) {
-        applyElementProps(container, dprops);
       }
     }
 
@@ -397,49 +372,21 @@ const startDrag = (
       placeholder.nextElementSibling !== refNode ||
       placeholder.parentElement !== container
     ) {
-      // const firstRects = new Map<HTMLElement, DOMRect>();
-      // if (props?.disableAnimation && !props.disableAnimation(state, e)) {
-      //    items.forEach((el) => {
-      //       firstRects.set(el, el.getBoundingClientRect());
-      //    });
-      // }
-
       if (refNode) {
         container.insertBefore(placeholder, refNode);
       } else {
         container.appendChild(placeholder);
       }
-
-      // if (props?.disableAnimation && !props.disableAnimation(state, e)) {
-      //    items.forEach((el) => {
-      //       const first = firstRects.get(el);
-      //       if (!first) return;
-      //       const last = el.getBoundingClientRect();
-      //       const dx = first.left - last.left;
-      //       const dy = first.top - last.top;
-
-      //       if (!dx && !dy) return;
-
-      //       el.style.transition = "none";
-      //       el.style.transform = `translate(${dx}px, ${dy}px)`;
-
-      //       requestAnimationFrame(() => {
-      //          requestAnimationFrame(() => {
-      //             el.style.transition = "transform 250ms cubic-bezier(.22,.61,.36,1)";
-      //             el.style.transform = "";
-      //          });
-      //       });
-      //    });
-      // }
     }
 
-    // const finalIndex = targetDraggables.filter((el) => el !== draggable).findIndex(d => d === placeholder)
     state.target = {
       id: targetConId,
       index: insertIndex,
+      data: droppableRegistry.get(targetConId),
+      element: container,
     };
 
-    renderDragElements(e);
+    renderDragElements(state, e);
     if (props?.onMove) {
       props.onMove(state, e);
     }
@@ -487,22 +434,6 @@ const startDrag = (
     drag_started = false;
     if (props?.onDrop && state.target && isStarted) {
       props.onDrop(state, e);
-    }
-
-    if (props?.getActiveDroppableProps && isStarted) {
-      if (state.target) {
-        const td = getDroppable(state.target.id);
-        const dprops = props?.getActiveDroppableProps(
-          {
-            ...state,
-            target: null,
-          },
-          e,
-        );
-        if (dprops) {
-          applyElementProps(td, dprops);
-        }
-      }
     }
 
     draggable.style.removeProperty("display");

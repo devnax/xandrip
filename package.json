@@ -1,6 +1,6 @@
 {
   "name": "xandrip",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "main": "./index.cjs",
   "module": "./index.js",
   "types": "./index.d.ts",
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/devnax/xandrip.git"
   },
   "scripts": {
-    "start": "makepack start -p 1234",
+    "start": "makepack start -p 4000",
     "build": "makepack build",
     "release": "makepack release"
   },
