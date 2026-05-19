@@ -109,13 +109,13 @@ const startDrag = (
     source: {
       id: droppableId,
       index: currentIndex,
-      data: droppableRegistry.get(droppableId),
+      data: droppableRegistry.get(droppableId)?.data,
       element: droppable,
     },
     target: {
       id: droppableId,
       index: currentIndex,
-      data: droppableRegistry.get(droppableId),
+      data: droppableRegistry.get(droppableId)?.data,
       element: droppable,
     },
   };
@@ -298,7 +298,7 @@ const startDrag = (
           source: {
             id: container.dataset.xanDroppable as string,
             index: 0,
-            data: droppableRegistry.get(container.dataset.xanDroppable),
+            data: droppableRegistry.get(container.dataset.xanDroppable)?.data,
             element: container,
           },
         },
@@ -318,7 +318,7 @@ const startDrag = (
           target: {
             id: container.dataset.xanDroppable as string,
             index: 0,
-            data: droppableRegistry.get(container.dataset.xanDroppable),
+            data: droppableRegistry.get(container.dataset.xanDroppable)?.data,
             element: container,
           },
         },
@@ -382,7 +382,7 @@ const startDrag = (
     state.target = {
       id: targetConId,
       index: insertIndex,
-      data: droppableRegistry.get(targetConId),
+      data: droppableRegistry.get(targetConId)?.data,
       element: container,
     };
 
