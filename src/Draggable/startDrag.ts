@@ -128,7 +128,6 @@ const startDrag = (
     return;
   }
   const rect = draggable.getBoundingClientRect();
-
   const grabX = (event.clientX - rect.left) / rect.width;
   const grabY = (event.clientY - rect.top) / rect.height;
 
@@ -139,7 +138,6 @@ const startDrag = (
 
   draggable.querySelectorAll("*").forEach((el) => {
     const element = el as HTMLElement;
-
     element.draggable = false;
     element.style.userSelect = "none";
     element.style.touchAction = "none";
@@ -155,46 +153,6 @@ const startDrag = (
   const placeholder = draggable.cloneNode(true) as HTMLElement;
   const cloneRoot = createRoot(clone);
   const placeholderRoot = createRoot(placeholder);
-
-  let prevKey = "";
-  const renderDragElements = (_state: any, e: PointerEvent) => {
-    const key =
-      `${_state.source.id}:${_state.source.index}|` +
-      `${_state.target?.id ?? ""}:${_state.target?.index ?? -1}`;
-    if (key === prevKey) return;
-    prevKey = key;
-
-    if (props?.renderPlaceholder) {
-      const pdom = props.renderPlaceholder(_state, e);
-      if (pdom) {
-        placeholderRoot.render(pdom);
-      }
-    }
-
-    if (props?.renderActiveItem) {
-      const activedom = props.renderActiveItem(_state, e) as ReactNode;
-      if (activedom) {
-        cloneRoot.render(activedom);
-      }
-    }
-
-    if (props?.getPlaceholderProps) {
-      const pprops = props.getPlaceholderProps(_state, e);
-      if (pprops) {
-        applyElementProps(placeholder, pprops);
-      }
-    }
-
-    if (props?.getActiveItemProps) {
-      const aprops = props.getActiveItemProps(_state, e);
-      if (aprops) {
-        applyElementProps(clone, aprops);
-      }
-    }
-  };
-
-  renderDragElements(state, event);
-  startAutoScroll();
 
   placeholder.removeAttribute("data-xan-droppable-id");
   placeholder.removeAttribute("data-xan-draggable");
@@ -223,6 +181,47 @@ const startDrag = (
   clone.style.willChange = "transform";
   clone.style.zIndex = "999999";
   clone.style.visibility = "hidden";
+
+  let prevKey = "";
+  const renderDragElements = (_state: any, e: PointerEvent) => {
+    const key =
+      `${_state.source.id}:${_state.source.index}|` +
+      `${_state.target?.id ?? ""}:${_state.target?.index ?? -1}`;
+    if (key === prevKey) return;
+    prevKey = key;
+
+    if (props?.renderPlaceholder) {
+      const pdom = props.renderPlaceholder(_state, e);
+      if (pdom) {
+        placeholder.style.removeProperty("opacity");
+        placeholderRoot.render(pdom);
+      }
+    }
+
+    if (props?.renderActiveItem) {
+      const activedom = props.renderActiveItem(_state, e) as ReactNode;
+      if (activedom) {
+        cloneRoot.render(activedom);
+      }
+    }
+
+    if (props?.getPlaceholderProps) {
+      const pprops = props.getPlaceholderProps(_state, e);
+      if (pprops) {
+        applyElementProps(placeholder, pprops);
+      }
+    }
+
+    if (props?.getActiveItemProps) {
+      const aprops = props.getActiveItemProps(_state, e);
+      if (aprops) {
+        applyElementProps(clone, aprops);
+      }
+    }
+  };
+
+  renderDragElements(state, event);
+  startAutoScroll();
 
   draggable.after(placeholder);
   droppable.after(clone);
