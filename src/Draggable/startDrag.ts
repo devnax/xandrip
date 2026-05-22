@@ -30,6 +30,27 @@ export type XandripState = {
   };
 };
 
+type CSSObject = Record<string, string | number>;
+
+function cssObjectToString(style: CSSObject) {
+  return Object.entries(style)
+    .map(([key, value]) => {
+      const cssKey = key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+      return `${cssKey}:${value}`;
+    })
+    .join(";");
+}
+
+export function style(css: CSSObject, doc: Document = document) {
+  const className = "x_" + Math.random().toString(36).slice(2, 8);
+  const rule = `.${className}{${cssObjectToString(css)}}`;
+  const styleEl = doc.createElement("style");
+  styleEl.textContent = rule;
+  doc.head.appendChild(styleEl);
+
+  return { className, remove: () => styleEl.remove() };
+}
+
 function resolveDroppableFromPoint(
   x: number,
   y: number,
@@ -136,18 +157,19 @@ const startDrag = (
   let offsetX = event.clientX - rect.left;
   let offsetY = event.clientY - rect.top;
 
-  draggable.querySelectorAll("*").forEach((el) => {
-    const element = el as HTMLElement;
-    element.draggable = false;
-    element.style.userSelect = "none";
-    element.style.touchAction = "none";
-    (element.style as any).webkitUserDrag = "none";
+  const draggableStyle = style({
+    userSelect: "none",
+    touchAction: "none",
+    webkitUserDrag: "none",
+    WebkitUserDrag: "none",
+    userDrag: "none",
   });
 
-  draggable.draggable = false;
-  draggable.style.userSelect = "none";
-  draggable.style.touchAction = "none";
-  (draggable.style as any).webkitUserDrag = "none";
+  const draggableDisplayStyle = style({
+    display: "none!important",
+  });
+
+  draggable.classList.add(draggableStyle.className);
 
   const clone = draggable.cloneNode(true) as HTMLElement;
   const placeholder = draggable.cloneNode(true) as HTMLElement;
@@ -194,6 +216,8 @@ const startDrag = (
       const pdom = props.renderPlaceholder(_state, e);
       if (pdom) {
         placeholder.style.removeProperty("opacity");
+        placeholder.removeAttribute("class");
+        placeholder.removeAttribute("id");
         placeholderRoot.render(pdom);
       }
     }
@@ -201,6 +225,8 @@ const startDrag = (
     if (props?.renderActiveItem) {
       const activedom = props.renderActiveItem(_state, e) as ReactNode;
       if (activedom) {
+        clone.removeAttribute("class");
+        clone.removeAttribute("id");
         cloneRoot.render(activedom);
       }
     }
@@ -262,7 +288,7 @@ const startDrag = (
 
     // hide original
     if (!isSourceCopy) {
-      draggable.style.display = "none";
+      draggable.classList.add(draggableDisplayStyle.className);
       placeholder.style.display = `block`;
     } else {
       if (state.target && state.source.id !== state.target?.id) {
@@ -434,14 +460,17 @@ const startDrag = (
     if (props?.onDrop && state.target && isStarted) {
       props.onDrop(state, e);
     }
+    draggable.classList.remove(draggableStyle.className);
+    draggable.classList.remove(draggableDisplayStyle.className);
+    draggableStyle.remove();
+    draggableDisplayStyle.remove();
 
-    draggable.style.removeProperty("display");
     cloneRoot.unmount();
     placeholderRoot.unmount();
 
     clone.remove();
     placeholder.remove();
-    // root.style.removeProperty("user-select");
+
     (event.target as HTMLElement).releasePointerCapture?.(event.pointerId);
   };
 

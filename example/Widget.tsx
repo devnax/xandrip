@@ -11,7 +11,7 @@ type IconProps = {
   name: string;
   icon: ReactElement;
 };
-const Icon = ({ name, icon }: IconProps) => {
+const Icon = ({ name, icon, ...rest }: any) => {
   return (
     <Stack
       p={3}
@@ -24,6 +24,7 @@ const Icon = ({ name, icon }: IconProps) => {
       width={130}
       height={100}
       userSelect={"none"}
+      {...rest}
     >
       <button>Move</button>
       <Box>{icon}</Box>
@@ -47,9 +48,13 @@ const Widget = () => {
             gap: 8,
           }}
         >
-          <Draggable id="wa" data={{ name: "nax" }}>
-            <Icon name="Text" icon={<TextFields />} />
-          </Draggable>
+          <Draggable
+            id="wa"
+            data={{ name: "nax" }}
+            render={({ ref, props }) => {
+              return <Icon name="Text" icon={<TextFields />} {...props} />;
+            }}
+          />
           <Draggable id="wb">
             <Icon name="View" icon={<TextFields />} />
           </Draggable>
